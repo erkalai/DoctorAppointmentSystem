@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Users</div>
+            <div class="card-body">
+                <h5 class="card-title">@ViewBag.UserCount Users</h5>
+                <p class="card-text">Manage system users</p>
+                <a asp-controller="Home" asp-action="ManageUsers" class="btn btn-light">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Patients</div>
+            <div class="card-body">
+                <h5 class="card-title">@ViewBag.PatientCount Patients</h5>
+                <p class="card-text">View patient records</p>
+                <a asp-controller="Patient" asp-action="Index" class="btn btn-light">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Appointments</div>
+            <div class="card-body">
+                <h5 class="card-title">@ViewBag.AppointmentCount Appointments</h5>
+                <p class="card-text">View all appointments</p>
+                <a asp-controller="Appointment" asp-action="Index" class="btn btn-light">View</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <h4>Quick Actions</h4>
+    <div class="list-group">
+        <a asp-controller="Home" asp-action="CreateUser" class="list-group-item list-group-item-action">Create New User</a>
+        <a asp-controller="Patient" asp-action="Create" class="list-group-item list-group-item-action">Register New Patient</a>
+        <a asp-controller="Appointment" asp-action="Create" class="list-group-item list-group-item-action">Schedule Appointment</a>
+    </div>
+</div>

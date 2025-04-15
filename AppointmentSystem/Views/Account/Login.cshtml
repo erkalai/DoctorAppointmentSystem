@@ -1,0 +1,18 @@
+﻿@using AppointmentSystem.Models;
+@model User
+
+<h2>Login Page</h2>
+<form asp-action="Login" method="post" class="form-group">
+	<div>
+		<label asp-for="Email" class="form-control"></label>
+		<input asp-for="Email"/>
+		<span asp-validation-for="Email"></span>
+	</div>
+	<div>
+		<label asp-for="Password" class="form-control"></label>
+		<input asp-for="Password"/>
+		<span asp-validation-for="Password" class="text-danger"></span>
+	</div>
+	<button type="submit">Login</button>
+
+</form>
