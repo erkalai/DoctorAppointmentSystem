@@ -1,0 +1,167 @@
+﻿@model Appointment
+
+@{
+    ViewData["Title"] = "Schedule New Appointment";
+    var doctors = ViewBag.Doctors as List<User>;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Create Appointment</h2>
+
+    <form asp-controller="Appointment" asp-action="CreateAppointment" id="appointmentForm" method="post">
+        <div class="form-group">
+            <label>Patient Mobile Number</label>
+            <input type="text" id="patientMobile" class="form-control" placeholder="Enter mobile number and press Enter">
+            <small class="text-danger" id="patientError" style="display:none;">Patient not found</small>
+        </div>
+
+        <div class="form-group">
+            <label>Patient Name</label>
+            <input asp-for="PatientId" type="hidden" id="patientId" />
+            <input type="text" class="form-control" id="patientName" readonly />
+        </div>
+
+        <div class="form-group">
+            <label>Select Doctor</label>
+            <select asp-for="UserId" class="form-control" id="doctorSelect" required>
+                <option value="">-- Select Doctor --</option>
+                @foreach (var doctor in doctors)
+                {
+                    <option value="@doctor.UserId">Dr. @doctor.FullName (@doctor.Specialization)</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Appointment Date</label>
+            <input asp-for="AppointmentDate" type="date" class="form-control" id="appointmentDate"
+                   min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+        </div>
+
+        <div class="form-group">
+            <label>Time Slot</label>
+            <select asp-for="AppointmentTime" class="form-control" id="timeSlot" disabled required>
+                <option value="">-- Select Doctor and Date First --</option>
+            </select>
+        </div>
+
+        <input type="hidden" asp-for="Status" value="Scheduled" />
+
+        <button type="submit" class="btn btn-primary">Book Appointment</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/select2/dist/js/select2.full.min.js"></script>
+    <link href="~/lib/select2/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script>
+        $(document).ready(function () {
+            // Patient search
+            $('#patientMobile').keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    searchPatient();
+                }
+            });
+
+            function searchPatient() {
+                var mobile = $('#patientMobile').val().trim();
+                if (!mobile) return;
+
+                $.get('/Appointment/GetPatientByMobile', { mobile: mobile })
+                    .done(function(response) {
+                    if (response.success) {
+                        $('#patientId').val(response.patient.id);
+                        $('#patientName').val(response.patient.fullName);
+                        $('#patientMobile').val(response.patient.phone);
+                        console.log(response.patient.id);
+                        console.log(response.patient.fullName);
+                    } else {
+                        $('#patientError').text(response.message).show();
+                        $('#patientId').val('');
+                        $('#patientName').val('');
+                    }
+                })
+                    .fail(function () {
+                        $('#patientError').text('Patient not found').show();
+                        $('#patientName').val('');
+                        $('#patientId').val('');
+                    });
+            }
+
+            // Disable date until doctor is selected
+            $('#appointmentDate').prop('disabled', true);
+
+            $('#doctorSelect').change(function () {
+                var doctorId = $(this).val();
+                $('#appointmentDate').prop('disabled', !doctorId);
+
+                if (!doctorId) {
+                    $('#timeSlot').empty().append('<option>-- Select Doctor First --</option>').prop('disabled', true);
+                }
+            });
+
+            $('#appointmentDate').change(function () {
+                var doctorId = $('#doctorSelect').val();
+                var date = $(this).val();
+                if (!doctorId || !date) return;
+
+                $('#timeSlot').empty().append('<option>Loading slots...</option>').prop('disabled', true);
+
+                $.get('/Appointment/GetAvailableSlots', { doctorId: doctorId, date: date })
+                    .done(function (slots) {
+                        $('#timeSlot').empty();
+                        if (slots.length > 0) {
+                            $('#timeSlot').append('<option value="">-- Select Time --</option>');
+                            slots.forEach(function (slot) {
+                                $('#timeSlot').append($('<option>', {
+                                    value: slot + ':00',
+                                    text: slot
+                                }));
+                            });
+                            $('#timeSlot').prop('disabled', false);
+                        } else {
+                            $('#timeSlot').append('<option>No available slots</option>');
+                        }
+                    })
+                    .fail(function () {
+                        $('#timeSlot').empty().append('<option>Error loading slots</option>');
+                    });
+            });
+
+            // Final client-side validation
+                    // Update form submission handler
+        $('#appointmentForm').submit(function(e) {
+            // Manually validate required fields
+            if (!$('#patientId').val()) {
+                e.preventDefault();
+                $('#patientError').text('Please select a valid patient first').show();
+                return false;
+            }
+
+            if (!$('#doctorSelect').val()) {
+                e.preventDefault();
+                $('#doctorSelect').focus();
+                return false;
+            }
+
+            if (!$('#appointmentDate').val()) {
+                e.preventDefault();
+                $('#appointmentDate').focus();
+                return false;
+            }
+
+            if (!$('#timeSlot').val()) {
+                e.preventDefault();
+                $('#timeSlot').focus();
+                return false;
+            }
+
+            return true;
+        });
+        });
+    </script>
+}

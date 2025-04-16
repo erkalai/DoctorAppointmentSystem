@@ -1,38 +1,54 @@
-﻿@using AppointmentSystem.Models
-@model User
+﻿@model AppointmentSystem.Models.User
 
-<h2>Register Form</h2>
-<form asp-action="Register" class="form-group">
-	<div>
-		<label asp-for="FullName"></label>
-		<input asp-for="FullName" class="form-control"/>
-		<span asp-validation-for="FullName"></span>
-	</div>
-	<div>
-		<label asp-for="Phone"></label>
-		<input asp-for="Phone" class="form-control" />
-		<span asp-validation-for="Phone"></span>
-	</div>
-	<div>
-		<label asp-for="Email"></label>
-		<input asp-for="Email" class="form-control" />
-		<span asp-validation-for="Email"></span>
-	</div>
-	<div>
-		<label asp-for="Role"></label>
-		<select asp-for="Role">
-			<option value="">-- Select Role --</option>
-			<option value="Admin">Admin</option>
-			<option value="Doctor">Doctor</option>
-			<option value="Receptionist">Receptionist</option>
-		</select>
-		<span asp-validation-for="Role"></span>
-	</div>
-	<div>
-		<label asp-for="Password"></label>
-		<input asp-for="Password" class="form-control" />
-		<span asp-validation-for="Password"></span>
-	</div>
+@{
+    ViewData["Title"] = "Register";
+}
 
-	<button type="submit">Register</button>
-</form>
+<h2 class="text-center mb-4">Register</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Register" method="post" class="p-4 border rounded shadow-sm bg-light">
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label"></label>
+                <select asp-for="Role" class="form-select">
+                    <option value="">-- Select Role --</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Receptionist">Receptionist</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Register</button>
+
+            <div class="text-center mt-3">
+                Already have an account? <a asp-action="Login" asp-controller="Account">Login here</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -2,9 +2,11 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
+<h2 class="mb-4 text-center">Admin Dashboard</h2>
+
 <div class="row">
     <div class="col-md-4">
-        <div class="card text-white bg-primary mb-3">
+        <div class="card text-white bg-primary mb-3 shadow-sm">
             <div class="card-header">Users</div>
             <div class="card-body">
                 <h5 class="card-title">@ViewBag.UserCount Users</h5>
@@ -14,17 +16,17 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-success mb-3">
+        <div class="card text-white bg-success mb-3 shadow-sm">
             <div class="card-header">Patients</div>
             <div class="card-body">
-                <h5 class="card-title">@ViewBag.PatientCount Patients</h5>
+                <h5 class="card-title">@ViewBag.PatientsCount Patients</h5>
                 <p class="card-text">View patient records</p>
                 <a asp-controller="Patient" asp-action="Index" class="btn btn-light">View</a>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-info mb-3">
+        <div class="card text-white bg-info mb-3 shadow-sm">
             <div class="card-header">Appointments</div>
             <div class="card-body">
                 <h5 class="card-title">@ViewBag.AppointmentCount Appointments</h5>
@@ -38,8 +40,50 @@
 <div class="mt-4">
     <h4>Quick Actions</h4>
     <div class="list-group">
-        <a asp-controller="Home" asp-action="CreateUser" class="list-group-item list-group-item-action">Create New User</a>
-        <a asp-controller="Patient" asp-action="Create" class="list-group-item list-group-item-action">Register New Patient</a>
-        <a asp-controller="Appointment" asp-action="Create" class="list-group-item list-group-item-action">Schedule Appointment</a>
+        <a asp-controller="Account" asp-action="Register" class="list-group-item list-group-item-action">
+            ➕ Create New User
+        </a>
+        <a asp-controller="Patient" asp-action="CreatePatient" class="list-group-item list-group-item-action">
+            🩺 Register New Patient
+        </a>
+        <a asp-controller="Appointment" asp-action="CreateAppointment" class="list-group-item list-group-item-action">
+            📅 Schedule Appointment
+        </a>
     </div>
 </div>
+
+<div class="mt-4">
+    <h4>Admin Tools</h4>
+    <div class="list-group">
+        <a asp-controller="Reports" asp-action="Index" class="list-group-item list-group-item-action">
+            📊 View Reports & Statistics
+        </a>
+        <a asp-controller="Notification" asp-action="Create" class="list-group-item list-group-item-action">
+            📢 Send Notification to Staff
+        </a>
+        <a asp-controller="Logs" asp-action="UserActivity" class="list-group-item list-group-item-action">
+            🕵️ User Activity Logs
+        </a>
+        <a asp-controller="Settings" asp-action="Index" class="list-group-item list-group-item-action">
+            ⚙️ System Settings
+        </a>
+        <button class="list-group-item list-group-item-action" onclick="toggleDarkMode()">
+            🌓 Toggle Dark Mode
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('bg-dark');
+            document.body.classList.toggle('text-white');
+
+            // Optional: toggle card backgrounds
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.toggle('bg-light');
+                card.classList.toggle('text-dark');
+            });
+        }
+    </script>
+}

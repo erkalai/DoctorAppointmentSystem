@@ -25,6 +25,26 @@ namespace AppointmentSystem.Data
                     Phone = "1234567890"
                 }
             );
+
+            // Appointment relationships
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Patient)
+                .WithMany()
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Doctor)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //// Configure Time as string
+            //modelBuilder.Entity<Appointment>()
+            //    .Property(a => a.AppointmentTime)
+            //    .HasConversion(
+            //        v => v.ToString(),
+            //        v => v);
         }
 
     }

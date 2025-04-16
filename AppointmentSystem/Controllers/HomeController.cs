@@ -44,7 +44,7 @@ namespace AppointmentSystem.Controllers
                 case "Doctor":
                     var doctorAppointments = await _context.Appointments
                     .Include(a => a.Patient)
-                    .Where(a => a.DoctorId == doctorGuid && a.Status == "Scheduled")
+                    .Where(a => a.UserId == doctorGuid && a.Status == "Scheduled")
                     .OrderBy(a => a.AppointmentDate)
                     .ThenBy(a => a.AppointmentTime)
                     .ToListAsync();
@@ -57,7 +57,7 @@ namespace AppointmentSystem.Controllers
                         .OrderBy(a => a.AppointmentDate)
                         .ThenBy(a => a.AppointmentTime)
                         .ToListAsync();
-                    return View("Receptionist", upcommingAppointments);
+                    return View("ReceptionistDashboard", upcommingAppointments);
                 default:
                     return RedirectToAction("Login","Account");
             }

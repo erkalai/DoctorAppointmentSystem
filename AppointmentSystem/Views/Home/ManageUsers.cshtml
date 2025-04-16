@@ -1,0 +1,34 @@
+﻿@using AppointmentSystem.Models
+@model List<User>
+
+<div class="row">
+	<div class="col"> <h2>Manage Users</h2></div>
+	<div class="col">
+		<a asp-controller="Account" asp-action="Register" class="btn btn-success">CreateUser</a>
+	</div>
+</div>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Name</td>
+			<td>Role</td>
+			<th>Email</th>
+			<th>Phone</th>
+			<td>Action</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var user in Model)
+		{
+			<tr>
+				<td>@user.FullName</td>
+				<td>@user.Role</td>
+				<td>@user.Email</td>
+				<td>@user.Phone</td>
+				<td>
+					<a asp-controller="Account" asp-action="UpdateUser" asp-route-id="@user.UserId" class="btn btn-warning">Edit</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

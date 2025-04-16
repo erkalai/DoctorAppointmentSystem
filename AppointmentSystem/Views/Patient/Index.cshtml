@@ -1,0 +1,31 @@
+﻿@using AppointmentSystem.Models
+@model List<Patient>
+
+<h2>Index</h2>
+<h4>Patient List</h4>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Name</td>
+			<td>Sex</td>
+			<td>Address</td>
+			<td>Phone</td>
+			<td>Email</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var patient in Model)
+		{
+			<tr>
+				<td>@patient.FullName</td>
+				<td>@patient.Sex</td>
+				<td>@patient.Address</td>
+				<td>@patient.Phone</td>
+				<td>@patient.Email</td>
+				<td>
+					<a asp-action="EditPatient" asp-route-data="">Edit</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

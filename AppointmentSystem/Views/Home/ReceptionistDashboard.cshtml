@@ -1,0 +1,30 @@
+﻿<h2>Receptionist DashBoard</h2>
+<a asp-controller="Patient" asp-action="CreatePatient" class="btn btn-outline-primary">Create Patient</a>
+<div class="row">
+	<div class="col-md-4">
+		<h2>Form</h2>
+	</div>
+	<div class="col-md-8">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<td>Name</td>
+					<td>Sex</td>
+					<td>Date</td>
+					<td>Time</td>
+					<td>Action</td>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var appointment in Model)
+				{
+					<tr>
+						<td>@appointment.FullName</td>
+						<td>@appointment.Sex</td>
+						<td>@appointment.</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

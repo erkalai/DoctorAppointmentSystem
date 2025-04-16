@@ -1,5 +1,6 @@
 ﻿using AppointmentSystem.Data;
 using AppointmentSystem.Models;
+using AppointmentSystem.Models.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -96,6 +97,61 @@ namespace AppointmentSystem.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdateUser(string id)
+        {
+            Guid userIdGuid = new Guid(id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userIdGuid);
+
+            var dto = new UpdateUser
+            {
+                UserId = user.UserId,
+                FullName = user.FullName,
+                Phone = user.Phone,
+                Email = user.Email,
+                Password = user.Password,
+                Role = user.Role,
+                Specialization = user.Specialization,
+                Qualifications = user.Qualifications,
+                WorkDayStart = user.WorkDayStart,
+                WorkDayEnd = user.WorkDayEnd,
+                AppointmentDuration = user.AppointmentDuration,
+                UnavilableDays = user.UnavilableDays,
+                AvailableDays = user.AvailableDays
+            };
+
+            return View(dto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UpdateUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingUser = await _context.Users.FindAsync(user.UserId);
+                if (existingUser != null)
+                {
+                    existingUser.FullName = user.FullName;
+                    existingUser.Email = user.Email;
+                    existingUser.Phone = user.Phone;
+                    existingUser.Password = user.Password;
+                    existingUser.Role = user.Role;
+                    existingUser.Specialization = user.Specialization;
+                    existingUser.Qualifications = user.Qualifications;
+                    existingUser.WorkDayStart = user.WorkDayStart;
+                    existingUser.WorkDayEnd = user.WorkDayEnd;
+                    existingUser.AppointmentDuration = user.AppointmentDuration;
+                    existingUser.UnavilableDays = user.UnavilableDays;
+                    existingUser.AvailableDays = user.AvailableDays;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("ManageUsers", "Home");
+                } else
+                {
+                    ModelState.AddModelError("", "User not found.");
+                }
+            }
+            return View(user);
+        }
         // GET: Account/Logout
         public IActionResult Logout()
         {

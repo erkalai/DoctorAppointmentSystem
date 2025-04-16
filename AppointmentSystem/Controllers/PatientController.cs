@@ -1,6 +1,7 @@
 ﻿using AppointmentSystem.Data;
 using AppointmentSystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppointmentSystem.Controllers
 {
@@ -13,6 +14,13 @@ namespace AppointmentSystem.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var patient = await _context.Patients.ToListAsync();
+            return View(patient);
+        }
+
+        [HttpGet]
         public IActionResult CreatePatient()
         {
             return View();
@@ -21,6 +29,12 @@ namespace AppointmentSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePatient(Patient patient)
         {
+            ModelState.Remove("Phone");
+            ModelState.Remove("Email");
+            ModelState.Remove("Address");
+            ModelState.Remove("Sex");
+            ModelState.Remove("DateOfBirth");
+
             if (ModelState.IsValid)
             {
                 _context.Add(patient);
@@ -30,10 +44,6 @@ namespace AppointmentSystem.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetPatient()
-        //{
-
-        //}
+        
     }
 }
