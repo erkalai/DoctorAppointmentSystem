@@ -1,4 +1,5 @@
-﻿using AppointmentSystem.Data;
+﻿using AppointmentSystem.Attributes;
+using AppointmentSystem.Data;
 using AppointmentSystem.Models;
 using AppointmentSystem.Models.Dtos;
 using Microsoft.AspNetCore.Http;
@@ -40,11 +41,12 @@ namespace AppointmentSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_context.Users.Any())
-                {
-                    user.Role = "Admin";
-                }
-                else if (HttpContext.Session.GetString("Role") != "Admin")
+                //if (_context.Users.Any())
+                //{
+                //    user.Role = "Admin";
+                //}
+                //else
+                if (HttpContext.Session.GetString("Role") != "Admin")
                 {
                     return RedirectToAction("Login");
                 }
@@ -98,6 +100,7 @@ namespace AppointmentSystem.Controllers
         }
 
         [HttpGet]
+        [AdminOnly]
         public async Task<IActionResult> UpdateUser(string id)
         {
             Guid userIdGuid = new Guid(id);
@@ -124,6 +127,7 @@ namespace AppointmentSystem.Controllers
         }
 
         [HttpPost]
+        [AdminOnly]
         public async Task<IActionResult> UpdateUser(UpdateUser user)
         {
             if (ModelState.IsValid)

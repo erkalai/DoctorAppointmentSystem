@@ -52,7 +52,6 @@ namespace AppointmentSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAppointment(Appointment appointment)
         {
-            // Manually validate patient exists
             var patientExists = await _context.Patients
                 .AnyAsync(p => p.PatientId == appointment.PatientId);
 
@@ -103,6 +102,19 @@ namespace AppointmentSystem.Controllers
             });
 
             //return patient == null ? NotFound() : Json(patient);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAppointments()
+        {
+            var upcommingAppointments = await _context.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .Where(a => a.AppointmentDate >= DateTime.Today)
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.AppointmentTime)
+                .ToListAsync();
+            return View(upcommingAppointments);
         }
     }
 }
