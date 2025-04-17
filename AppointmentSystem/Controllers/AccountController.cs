@@ -12,11 +12,9 @@ namespace AppointmentSystem.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<AccountController> _logger;
-        public AccountController(ApplicationDbContext dbContext, ILogger<AccountController> logger)
+        public AccountController(ApplicationDbContext dbContext)
         {
             this._context = dbContext;
-            this._logger = logger;
         }
 
         // GET: Account/Register
