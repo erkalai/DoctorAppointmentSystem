@@ -9,12 +9,10 @@ namespace AppointmentSystem.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ApplicationDbContext dbContext, ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext dbContext)
         {
             _context = dbContext;
-            _logger = logger;
         }
         [HttpGet]
         public IActionResult Index()
