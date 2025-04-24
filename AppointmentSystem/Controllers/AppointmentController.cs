@@ -137,5 +137,51 @@ namespace AppointmentSystem.Controllers
             return View(appointment);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditAppointment(string id)
+        {
+            ViewBag.Doctors = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
+
+            if (!Guid.TryParse(id, out Guid appointmentGuid))
+            {
+                return NotFound();
+            }
+            var appointment = await _context.Appointments
+                   .Include(a => a.Patient) 
+                   .Include(a => a.Doctor)
+                   .FirstOrDefaultAsync(a => a.AppointmentId == appointmentGuid);
+            if(appointment == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Patient = appointment.Patient.FullName;
+            ViewBag.PatientPhone = appointment.Patient.Phone;
+            return View(appointment);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateAppointment(Appointment appointment)
+        {
+            var existingAppointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .FirstOrDefaultAsync(a => a.AppointmentId == appointment.AppointmentId);
+
+            if (existingAppointment == null)
+            {
+                return NotFound();
+            }
+
+            existingAppointment.UserId = appointment.UserId;
+            existingAppointment.AppointmentDate = appointment.AppointmentDate;
+            existingAppointment.AppointmentTime = appointment.AppointmentTime;
+            existingAppointment.Status = "Scheduled";
+
+            _context.Appointments.Update(existingAppointment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Dashboard", "Home");
+        }
+
     }
 }

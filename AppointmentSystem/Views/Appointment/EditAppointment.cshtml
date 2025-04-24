@@ -1,24 +1,31 @@
-﻿@model Appointment
+﻿@model AppointmentSystem.Models.Appointment
 
 @{
-    ViewData["Title"] = "Schedule New Appointment";
+    ViewData["Title"] = "Edit Appointment";
     var doctors = ViewBag.Doctors as List<User>;
+    var patient = ViewBag.Patient as string;
+    var patientPhone = ViewBag.PatientPhone as string;
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4">Create Appointment</h2>
+    <h2 class="mb-4">Edit Appointment</h2>
 
-    <form asp-controller="Appointment" asp-action="CreateAppointment" id="appointmentForm" method="post">
+    <form asp-controller="Appointment" asp-action="UpdateAppointment" id="appointmentForm" method="post">
+        <input type="hidden" asp-for="AppointmentId" />
+
         <div class="form-group">
-            <label>Patient Mobile Number</label>
-            <input type="text" id="patientMobile" class="form-control" placeholder="Enter mobile number and press Enter">
-            <small class="text-danger" id="patientError" style="display:none;">Patient not found</small>
+            <div class="col-md-6">
+                <label class="form-label"><i class="bi bi-person-fill"></i> Patient Name</label>
+                <input asp-for="PatientId" type="hidden" id="patientId" />
+                <input class="form-control" value="@patient" readonly />
+            </div>
         </div>
 
         <div class="form-group">
-            <label>Patient Name</label>
-            <input asp-for="PatientId" type="hidden" id="patientId" />
-            <input type="text" class="form-control" id="patientName" readonly />
+            <div class="col-md-6">
+                <label class="form-label"><i class="bi bi-person-fill"></i> Phone</label>
+                <input class="form-control" value="@patientPhone" readonly />
+            </div>
         </div>
 
         <div class="form-group">
@@ -47,7 +54,7 @@
 
         <input type="hidden" asp-for="Status" value="Scheduled" />
 
-        <button type="submit" class="btn btn-primary">Book Appointment</button>
+        <button type="submit" class="btn btn-primary">Update Appointment</button>
     </form>
 </div>
 
