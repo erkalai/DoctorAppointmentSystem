@@ -5,6 +5,9 @@
     var doctors = ViewBag.Doctors as List<User>;
     var patient = ViewBag.Patient as string;
     var patientPhone = ViewBag.PatientPhone as string;
+    var appointmentDate = ViewBag.AppointmentDate as string;
+    var appointmentTime = ViewBag.AppointmentTime as string;
+    var docName = ViewBag.DocName as string;
 }
 
 <div class="container mt-4">
@@ -31,7 +34,7 @@
         <div class="form-group">
             <label>Select Doctor</label>
             <select asp-for="UserId" class="form-control" id="doctorSelect" required>
-                <option value="">-- Select Doctor --</option>
+                <option value=""> -- Select Doctor -- </option>
                 @foreach (var doctor in doctors)
                 {
                     <option value="@doctor.UserId">Dr. @doctor.FullName (@doctor.Specialization)</option>
@@ -42,17 +45,23 @@
         <div class="form-group">
             <label>Appointment Date</label>
             <input asp-for="AppointmentDate" type="date" class="form-control" id="appointmentDate"
-                   min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                    value="@appointmentDate" required />
         </div>
 
         <div class="form-group">
             <label>Time Slot</label>
-            <select asp-for="AppointmentTime" class="form-control" id="timeSlot" disabled required>
-                <option value="">-- Select Doctor and Date First --</option>
+            <select asp-for="AppointmentTime" class="form-control" id="timeSlot" value="@appointmentTime" disabled required>
+                <option value="">-- Select Time Slot --</option>
             </select>
         </div>
 
-        <input type="hidden" asp-for="Status" value="Scheduled" />
+        <div class="form-group">
+            <label asp-for="Status">Status</label>
+            <select asp-for="Status" class="form-control" id="Status" required>
+                <option value="Scheduled">Scheduled</option>
+                <option value="Canceled">Canceled</option>
+            </select>
+        </div>
 
         <button type="submit" class="btn btn-primary">Update Appointment</button>
     </form>

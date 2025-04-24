@@ -156,6 +156,9 @@ namespace AppointmentSystem.Controllers
             }
             ViewBag.Patient = appointment.Patient.FullName;
             ViewBag.PatientPhone = appointment.Patient.Phone;
+            ViewBag.AppointmentDate = appointment.AppointmentDate;
+            ViewBag.AppointmentTime = appointment.AppointmentTime;
+            ViewBag.DocName = appointment.Doctor.FullName;
             return View(appointment);
         }
 
@@ -172,10 +175,9 @@ namespace AppointmentSystem.Controllers
                 return NotFound();
             }
 
-            existingAppointment.UserId = appointment.UserId;
             existingAppointment.AppointmentDate = appointment.AppointmentDate;
             existingAppointment.AppointmentTime = appointment.AppointmentTime;
-            existingAppointment.Status = "Scheduled";
+            existingAppointment.Status = appointment.Status;
 
             _context.Appointments.Update(existingAppointment);
             await _context.SaveChangesAsync();

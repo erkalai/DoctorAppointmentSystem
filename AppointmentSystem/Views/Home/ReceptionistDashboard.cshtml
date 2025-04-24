@@ -31,7 +31,7 @@
                 <td>@appointment.Notes</td>
                 <td>
                     <a asp-controller="Appointment" asp-action="AppointmentDetails" asp-route-id="@appointment.AppointmentId" class="btn btn-sm btn-info">Details</a>
-                    <a asp-controller="Appointment" asp-action="Cancel" asp-route-id="@appointment.AppointmentId" class="btn btn-sm btn-danger">Cancel</a>
+                    <a asp-controller="Appointment" asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId" class="btn btn-sm btn-danger">Cancel</a>
                 </td>
             </tr>
         }
