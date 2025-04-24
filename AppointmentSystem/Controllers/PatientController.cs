@@ -44,6 +44,75 @@ namespace AppointmentSystem.Controllers
             return View();
         }
 
-        
+        [HttpGet]
+        public async Task<IActionResult> PatientDetails(string id)
+        {
+            Guid patientId = new Guid(id);
+
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.PatientId == patientId);
+
+            return View(patient);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdatePatient(string id)
+        {
+            Guid guidId = new Guid(id);
+            var existPatient = await _context.Patients.FirstOrDefaultAsync(p => p.PatientId == guidId);
+            if(existPatient == null)
+            {
+                return BadRequest("Invalid");
+            }
+            return View(existPatient);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePatient(Patient patient)
+        {
+            var existPatient = await _context.Patients.FirstOrDefaultAsync(p => p.PatientId == patient.PatientId);
+
+            if (existPatient != null)
+            {
+                existPatient.FullName = patient.FullName;
+                existPatient.Address = patient.Address;
+                existPatient.DateOfBirth = patient.DateOfBirth;
+                existPatient.Email = patient.Email;
+                existPatient.Phone = patient.Phone;
+                existPatient.Sex = patient.Sex;
+                existPatient.RegistrationDate = patient.RegistrationDate;
+
+                _context.Update(existPatient);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeletePatient(string id)
+        {
+            Guid patientId = new Guid(id);
+            var existPatient = await _context.Patients.FirstOrDefaultAsync(p => p.PatientId == patientId);
+
+            return View(existPatient);
+        }
+
+        [HttpPost]
+        //[ActionName("Delete")]
+        public async Task<IActionResult> DeletePatientConfirmed(string id)
+        {
+            Guid patientGuid = new Guid(id);  
+            var existPatient = await _context.Patients.FirstOrDefaultAsync(p => p.PatientId == patientGuid);
+            if(existPatient != null)
+            {
+                _context.Patients.Remove(existPatient);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+          return RedirectToAction("Index");
+        }
     }
 }

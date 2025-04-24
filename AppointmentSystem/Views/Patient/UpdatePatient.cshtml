@@ -13,7 +13,8 @@
                         <i class="bi bi-pencil-square"></i> Edit Patient Information
                     </h4>
 
-                    <form asp-action="CreatePatient" method="post">
+                    <form asp-action="UpdatePatient" method="post">
+                        <input type="hidden" asp-for="PatientId" />
 
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -49,6 +50,12 @@
                                 <label asp-for="Email" class="form-label"><i class="bi bi-envelope-fill"></i> Email</label>
                                 <input asp-for="Email" class="form-control" type="email" />
                                 <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="RegistrationDate" class="form-label"><i class="bi bi-clock-history"></i> Registration Date</label>
+                                <input asp-for="RegistrationDate" class="form-control" type="date" disabled />
+                                <span asp-validation-for="RegistrationDate" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">

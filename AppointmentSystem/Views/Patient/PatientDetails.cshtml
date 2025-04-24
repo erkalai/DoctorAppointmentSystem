@@ -1,0 +1,47 @@
+﻿@model AppointmentSystem.Models.Patient
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Patient Information</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Full Name</th>
+                            <td>@Model.FullName</td>
+                        </tr>
+                        <tr>
+                            <th>Sex</th>
+                            <td>@Model.Sex</td>
+                        </tr>
+                        <tr>
+                            <th>Date of Birth</th>
+                            <td>@Model.DateOfBirth</td>
+                        </tr>
+                        <tr>
+                            <th>Address</th>
+                            <td>@Model.Address</td>
+                        </tr>
+                        <tr>
+                            <th>Phone</th>
+                            <td>@Model.Phone</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>@Model.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Registration Date</th>
+                            <td>@Model.RegistrationDate.ToString("dd MMM yyyy")</td>
+                        </tr>
+                    </table>
+                    <a class="btn btn-success btn-block" asp-action="Index">Back</a>
+                    <a class="btn btn-warning btn-block" asp-action="UpdatePatient" asp-route-id="@Model.PatientId">Edit</a>
+                    <a class="btn btn-danger btn-block" asp-action="DeletePatient" asp-route-id="@Model.PatientId">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

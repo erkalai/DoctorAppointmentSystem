@@ -1,6 +1,5 @@
 ﻿using AppointmentSystem.Data;
 using AppointmentSystem.Models;
-using AppointmentSystem.Service;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -116,5 +115,27 @@ namespace AppointmentSystem.Controllers
                 .ToListAsync();
             return View(upcommingAppointments);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> AppointmentDetails(string id)
+        {
+            if (!Guid.TryParse(id, out Guid appointmentGuid))
+            {
+                return NotFound();
+            }
+
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .FirstOrDefaultAsync(a => a.AppointmentId == appointmentGuid);
+
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            return View(appointment);
+        }
+
     }
 }
