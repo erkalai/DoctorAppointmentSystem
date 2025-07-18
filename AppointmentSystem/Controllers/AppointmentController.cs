@@ -1,5 +1,8 @@
-﻿using AppointmentSystem.Data;
+﻿using System.Runtime.InteropServices;
+using AppointmentSystem.Data;
 using AppointmentSystem.Models;
+using AppointmentSystem.Models.ViewModels;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,33 +23,6 @@ namespace AppointmentSystem.Controllers
            ViewBag.Doctors = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
             return View();
         }
-
-
-        [HttpGet]
-        public async Task<IActionResult> GetAvailableSlots(string doctorId, DateTime date)
-        {
-            var startHour = 9;
-            var endHour = 17;
-            var interval = 20;
-            var allSlots = new List<string>();
-            for (var hour = startHour; hour < endHour; hour++)
-            {
-                for (int minutes = 0; minutes < 60; minutes += interval)
-                {
-                    allSlots.Add($"{hour:00}:{minutes:00}");
-                }
-            }
-
-            var bookedSlots = await _context.Appointments
-                .Where(a => a.UserId.ToString() == doctorId && a.AppointmentDate.Date == date.Date && a.Status != "Cancelled")
-                .Select(a => a.AppointmentTime.ToString(@"hh\:mm"))
-                .ToListAsync();
-
-
-            return Json(allSlots.Except(bookedSlots).ToList());
-        }
-
-
 
         [HttpPost]
         public async Task<IActionResult> CreateAppointment(Appointment appointment)
@@ -81,6 +57,30 @@ namespace AppointmentSystem.Controllers
             // If we got here, something failed
             ViewBag.Doctors = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
             return View(appointment);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAvailableSlots(Guid doctorId, DateTime date)
+        {
+            try
+            {
+                var bookedSlots = await _context.Appointments
+                    .Where(a => a.UserId == doctorId &&
+                                a.AppointmentDate.Date == date.Date &&
+                                a.Status != "Cancelled" &&
+                                a.Status != "Completed")
+                    .Select(a => a.AppointmentTime.ToString(@"hh\:mm"))
+                    .ToListAsync();
+
+                var allSlots = GenerateTimeSlots();
+                var availableSlots = allSlots.Except(bookedSlots).ToList();
+
+                return Json(availableSlots);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Error fetching available slots" });
+            }
         }
 
         [HttpGet]
@@ -138,52 +138,161 @@ namespace AppointmentSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditAppointment(string id)
+        public async Task<IActionResult> EditAppointment(Guid id)
         {
-            ViewBag.Doctors = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
+            try
+            {
+                var appointment = await _context.Appointments
+                    .Include(a => a.Patient)
+                    .Include(a => a.Doctor)
+                    .FirstOrDefaultAsync(a => a.AppointmentId == id);
 
-            if (!Guid.TryParse(id, out Guid appointmentGuid))
-            {
-                return NotFound();
+                if (appointment == null)
+                {
+                    TempData["ErrorMessage"] = "Appointment not found";
+                    return RedirectToAction("GetAllAppointments");
+                }
+
+                var doctors = await _context.Users
+                    .Where(u => u.Role == "Doctor")
+                    .OrderBy(u => u.FullName)
+                    .ToListAsync();
+
+                var availableSlots = await GetAvailableSlotsForDoctorAsync(appointment.UserId, appointment.AppointmentDate);
+
+                // Include the current time slot even if it's already booked
+                var currentTimeSlot = appointment.AppointmentTime.ToString(@"hh\:mm");
+                if (!availableSlots.Contains(currentTimeSlot))
+                {
+                    availableSlots.Add(currentTimeSlot);
+                    availableSlots.Sort();
+                }
+
+                var viewModel = new AppointmentEditViewModel
+                {
+                    Appointment = appointment,
+                    Doctor = doctors,
+                    AvailableTimeSlots = availableSlots
+                };
+
+                return View(viewModel);
             }
-            var appointment = await _context.Appointments
-                   .Include(a => a.Patient) 
-                   .Include(a => a.Doctor)
-                   .FirstOrDefaultAsync(a => a.AppointmentId == appointmentGuid);
-            if(appointment == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "An error occurred while loading the appointment";
+                return RedirectToAction("GetAllAppointments");
             }
-            ViewBag.Patient = appointment.Patient.FullName;
-            ViewBag.PatientPhone = appointment.Patient.Phone;
-            ViewBag.AppointmentDate = appointment.AppointmentDate;
-            ViewBag.AppointmentTime = appointment.AppointmentTime;
-            ViewBag.DocName = appointment.Doctor.FullName;
-            return View(appointment);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateAppointment(Appointment appointment)
+        public async Task<IActionResult> EditAppointment(AppointmentEditViewModel model)
         {
-            var existingAppointment = await _context.Appointments
-                .Include(a => a.Patient)
-                .Include(a => a.Doctor)
-                .FirstOrDefaultAsync(a => a.AppointmentId == appointment.AppointmentId);
-
-            if (existingAppointment == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                model.Doctor = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
+                model.AvailableTimeSlots = await GetAvailableSlotsForDoctorAsync(
+                    model.Appointment.UserId,
+                    model.Appointment.AppointmentDate);
+                return View(model);
             }
 
-            existingAppointment.AppointmentDate = appointment.AppointmentDate;
-            existingAppointment.AppointmentTime = appointment.AppointmentTime;
-            existingAppointment.Status = appointment.Status;
+            try
+            {
+                var existingAppointment = await _context.Appointments.FindAsync(model.Appointment.AppointmentId);
+                if (existingAppointment == null)
+                {
+                    return NotFound();
+                }
 
-            _context.Appointments.Update(existingAppointment);
-            await _context.SaveChangesAsync();
+                // Check slot availability
+                var isSlotAvailable = await IsTimeSlotAvailable(
+                    model.Appointment.UserId,
+                    model.Appointment.AppointmentDate,
+                    model.Appointment.AppointmentTime,
+                    model.Appointment.AppointmentId
+                );
 
-            return RedirectToAction("Dashboard", "Home");
+                if (!isSlotAvailable)
+                {
+                    ModelState.AddModelError("Appointment.AppointmentTime", "This time slot is already booked");
+                    model.Doctor = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
+                    model.AvailableTimeSlots = await GetAvailableSlotsForDoctorAsync(
+                        model.Appointment.UserId,
+                        model.Appointment.AppointmentDate);
+                    return View(model);
+                }
+
+                // Update fields
+                existingAppointment.UserId = model.Appointment.UserId;
+                existingAppointment.AppointmentDate = model.Appointment.AppointmentDate;
+                existingAppointment.AppointmentTime = model.Appointment.AppointmentTime;
+                existingAppointment.Status = model.Appointment.Status;
+                existingAppointment.Notes = model.Appointment.Notes;
+
+                _context.Update(existingAppointment);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Appointment updated successfully!";
+                return RedirectToAction("GetAllAppointments");
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "Error updating appointment");
+                TempData["ErrorMessage"] = "An error occurred while updating the appointment";
+
+                model.Doctor = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
+                model.AvailableTimeSlots = await GetAvailableSlotsForDoctorAsync(
+                    model.Appointment.UserId,
+                    model.Appointment.AppointmentDate);
+                return View(model);
+            }
         }
 
+        private async Task<bool> IsTimeSlotAvailable(Guid doctorId, DateTime date, TimeSpan time, Guid currentAppointmentId)
+        {
+            return !await _context.Appointments
+                .AnyAsync(a => a.UserId == doctorId &&
+                              a.AppointmentId != currentAppointmentId &&
+                              a.AppointmentDate.Date == date.Date &&
+                              a.AppointmentTime == time &&
+                              a.Status != "Cancelled");
+        }
+
+        private bool AppointmentExists(Guid id)
+        {
+            return _context.Appointments.Any(e => e.AppointmentId == id);
+        }
+
+        private async Task<List<string>> GetAvailableSlotsForDoctorAsync(Guid doctorId, DateTime date)
+        {
+            var bookedSlots = await _context.Appointments
+                .Where(a => a.UserId == doctorId &&
+                           a.AppointmentDate.Date == date.Date &&
+                           a.Status != "Cancelled" &&
+                           a.Status != "Completed")
+                .Select(a => a.AppointmentTime.ToString(@"hh\:mm"))
+                .ToListAsync();
+
+            var allSlots = GenerateTimeSlots();
+
+            return allSlots.Except(bookedSlots).ToList();
+        }
+
+        private List<string> GenerateTimeSlots()
+        {
+            var startHour = 9;
+            var endHour = 17;
+            var interval = 20;
+            var allSlots = new List<string>();
+
+            for (var hour = startHour; hour < endHour; hour++)
+            {
+                for (int minutes = 0; minutes < 60; minutes += interval)
+                {
+                    allSlots.Add($"{hour:00}:{minutes:00}");
+                }
+            }
+            return allSlots;
+        }
     }
 }

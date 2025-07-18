@@ -23,7 +23,25 @@ namespace AppointmentSystem.Data
                     FullName = "System Admin",
                     Email = "admin@hospital.com",
                     Phone = "1234567890"
-                }
+                },
+                new User
+                {
+                    UserId = new Guid("41111111-1111-1111-1111-111111111111"),
+                    Password = "admin@123",
+                    Role = "Receptionist",
+                    FullName = "Receptionist",
+                    Email = "r@hospital.com",
+                    Phone = "1234567891"
+                },
+                 new User
+                 {
+                     UserId = new Guid("19111111-1111-1111-1111-111111111111"),
+                     Password = "admin@123",
+                     Role = "Doctor",
+                     FullName = "Doctor",
+                     Email = "d@hospital.com",
+                     Phone = "1234567894"
+                 }
             );
 
             // Appointment relationships
@@ -39,12 +57,6 @@ namespace AppointmentSystem.Data
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //// Configure Time as string
-            //modelBuilder.Entity<Appointment>()
-            //    .Property(a => a.AppointmentTime)
-            //    .HasConversion(
-            //        v => v.ToString(),
-            //        v => v);
         }
 
     }

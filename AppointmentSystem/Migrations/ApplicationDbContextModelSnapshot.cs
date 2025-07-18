@@ -150,6 +150,24 @@ namespace AppointmentSystem.Migrations
                             Password = "admin@123",
                             Phone = "1234567890",
                             Role = "Admin"
+                        },
+                        new
+                        {
+                            UserId = new Guid("41111111-1111-1111-1111-111111111111"),
+                            Email = "r@hospital.com",
+                            FullName = "Receptionist",
+                            Password = "admin@123",
+                            Phone = "1234567891",
+                            Role = "Receptionist"
+                        },
+                        new
+                        {
+                            UserId = new Guid("19111111-1111-1111-1111-111111111111"),
+                            Email = "d@hospital.com",
+                            FullName = "Doctor",
+                            Password = "admin@123",
+                            Phone = "1234567894",
+                            Role = "Doctor"
                         });
                 });
 

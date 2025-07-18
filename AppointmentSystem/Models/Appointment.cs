@@ -5,7 +5,7 @@ namespace AppointmentSystem.Models
     public class Appointment
     {
         [Key]
-        public Guid AppointmentId { get; set; } = Guid.NewGuid();
+        public Guid AppointmentId { get; set; }
         public Guid PatientId { get; set; }
         public Patient? Patient { get; set; }
         public Guid UserId { get; set; }
