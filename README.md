@@ -31,4 +31,4 @@ A web-based application for managing doctor appointments, developed using ASP.NE
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/DoctorAppointmentSystem.git
+   git clone https://github.com/erkalai/DoctorAppointmentSystem.git
