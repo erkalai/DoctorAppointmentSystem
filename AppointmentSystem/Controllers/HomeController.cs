@@ -51,7 +51,7 @@ namespace AppointmentSystem.Controllers
                     var upcommingAppointments = await _context.Appointments
                         .Include(a => a.Patient)
                         .Include(a => a.Doctor)
-                        .Where(a => a.AppointmentDate >= DateTime.Today)
+                        .Where(a => a.AppointmentDate >= DateTime.Today && a.Status == "Scheduled")
                         .OrderBy(a => a.AppointmentDate)
                         .ThenBy(a => a.AppointmentTime)
                         .ToListAsync();

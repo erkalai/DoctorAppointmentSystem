@@ -1,9 +1,6 @@
-﻿using System.Runtime.InteropServices;
-using AppointmentSystem.Data;
+﻿using AppointmentSystem.Data;
 using AppointmentSystem.Models;
 using AppointmentSystem.Models.ViewModels;
-using Microsoft.AspNetCore.Http.Connections;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -109,11 +106,23 @@ namespace AppointmentSystem.Controllers
             var upcommingAppointments = await _context.Appointments
                 .Include(a => a.Doctor)
                 .Include(a => a.Patient)
-                .Where(a => a.AppointmentDate >= DateTime.Today)
+                .Where(a => a.AppointmentDate >= DateTime.Today && a.Status == "Scheduled")
                 .OrderBy(a => a.AppointmentDate)
                 .ThenBy(a => a.AppointmentTime)
                 .ToListAsync();
             return View(upcommingAppointments);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AllAppointments()
+        {
+            var allAppointments = await _context.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.AppointmentTime)
+                .ToListAsync();
+            return View(allAppointments);
         }
 
         [HttpGet]

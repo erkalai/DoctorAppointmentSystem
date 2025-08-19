@@ -16,7 +16,7 @@ namespace AppointmentSystem.Data
             modelBuilder.Entity<User>().HasData
             (
                 new User
-                {
+                {   
                     UserId = new Guid("11111111-1111-1111-1111-111111111111"),
                     Password = "admin@123",
                     Role = "Admin",

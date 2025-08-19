@@ -2,10 +2,8 @@
 using AppointmentSystem.Data;
 using AppointmentSystem.Models;
 using AppointmentSystem.Models.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AppointmentSystem.Controllers
 {

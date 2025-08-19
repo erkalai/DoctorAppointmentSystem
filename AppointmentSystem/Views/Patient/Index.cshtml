@@ -1,14 +1,15 @@
 ﻿@using AppointmentSystem.Models
 @model List<Patient>
 
-<div class="container">
+@* <div class="container"> *@
+<span class="text-small">Patient List></span>
+    <hr style="border: 1px solid black;">
     <a asp-controller="Patient" asp-action="CreatePatient" class="btn btn-outline-primary mb-3">Create Patient</a>
-    <div class="row justify-content-center">
+    @* <div class="row justify-content-center">
         <div class="col-12 col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h4 class="card-title mb-4">Patient List</h4>
-                    <table class="table table-bordered table-striped table-responsive">
+            <div class="card shadow-sm">*@
+                <div class="card-body"> 
+                    <table class="table table-bordered table-striped">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Name</th>
@@ -38,7 +39,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+    @*         </div>
         </div>
-    </div>
-</div>
+    </div> 
+</div>*@

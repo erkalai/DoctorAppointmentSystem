@@ -1,0 +1,179 @@
+﻿@* Data Table *@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+
+<div class="row mb-3">
+	<div class="col-md-2">
+		<input type="text" id="filterDate" class="form-control" placeholder="Date (dd/mm/yyyy)">
+	</div>
+	<div class="col-md-2">
+		<select id="filterSex" class="form-control">
+			<option value="">All Sex</option>
+			<option value="Male">Male</option>
+			<option value="Female">Female</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<input type="text" id="filterDoctor" class="form-control" placeholder="Doctor">
+	</div>
+	<div class="col-md-2">
+		<select id="filterStatus" class="form-control">
+			<option value="">All Status</option>
+			<option value="Scheduled">Scheduled</option>
+			<option value="Completed">Completed</option>
+			<option value="Cancelled">Cancelled</option>
+		</select>
+	</div>
+</div>
+
+<table class="table table-bordered" id="appointmentTable">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Sex</th>
+			<th>DOB</th>
+			<th>Doctor</th>
+			<th>Date</th>
+			<th>Time</th>
+			<th>Status</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var appointment in Model)
+		{
+			<tr>
+				<td>@appointment.Patient?.FullName</td>
+				<td>@appointment.Patient?.Sex</td>
+				<td>@appointment.Patient?.DateOfBirth.ToShortDateString()</td>
+				<td>Dr. @appointment.Doctor?.FullName</td>
+				<td>@appointment.AppointmentDate.ToShortDateString()</td>
+				<td>@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
+				<td>
+					@if (appointment.Status == "Scheduled")
+					{
+						<span class="badge bg-warning text-dark">Scheduled</span>
+					}
+					else if (appointment.Status == "Completed")
+					{
+						<span class="badge bg-success">Completed</span>
+					}
+					else if (appointment.Status == "Cancelled")
+					{
+						<span class="badge bg-danger text-dark">Cancelled</span>
+					}
+					else
+					{
+						<span class="badge bg-secondary"></span>
+					}
+				</td>
+				<td>
+					<button type="button"
+							class="btn btn-info btn-sm"
+							data-bs-toggle="modal"
+							data-bs-target="#infoModal"
+							data-name="@appointment.Patient?.FullName"
+							data-sex="@appointment.Patient?.Sex"
+							data-DOB="@appointment.Patient?.DateOfBirth.ToShortDateString()"
+							data-doctor="@appointment.Doctor?.FullName"
+							data-date="@appointment.AppointmentDate.ToShortDateString()"
+							data-time="@appointment.AppointmentTime.ToString(@"hh\:mm")"
+							data-status="@appointment.Status">
+						Info
+					</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" id="printArea">
+			<div class="modal-header">
+				<h5 class="modal-title" id="infoModalLabel">Appointment Info</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<p><strong>Name:</strong> <span id="modalname"></span></p>
+				<p><strong>Sex:</strong> <span id="modalsex"></span></p>
+				<p><strong>DOB:</strong> <span id="modalDOB"></span></p>
+				<p><strong>Doctor:</strong> <span id="modalDoctor"></span></p>
+				<p><strong>Date:</strong> <span id="modalDate"></span></p>
+				<p><strong>Time:</strong> <span id="modalTime"></span></p>
+				<p><strong>Status:</strong> <span id="modalStatus"></span></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="printModal()">Print</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	// Populate modal with data
+	var infoModal = document.getElementById('infoModal');
+	infoModal.addEventListener('show.bs.modal', function (event) {
+		var button = event.relatedTarget;
+		document.getElementById("modalname").textContent = button.getAttribute("data-name");
+		document.getElementById("modalsex").textContent = button.getAttribute("data-sex");
+		document.getElementById("modalDOB").textContent = button.getAttribute("data-DOB");
+		document.getElementById("modalDoctor").textContent = button.getAttribute("data-doctor");
+		document.getElementById("modalDate").textContent = button.getAttribute("data-date");
+		document.getElementById("modalTime").textContent = button.getAttribute("data-time");
+		document.getElementById("modalStatus").textContent = button.getAttribute("data-status");
+	});
+
+	// Print only modal content
+	function printModal() {
+		var printContent = document.getElementById("printArea").innerHTML;
+		var originalContent = document.body.innerHTML;
+
+		document.body.innerHTML = printContent;
+		window.print();
+		document.body.innerHTML = originalContent;
+		location.reload();
+	}
+	</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<script>
+	$(document).ready(function () {
+		var table = $('#appointmentTable').DataTable({
+			pageLength: 20,
+			lengthMenu: [[50, 100, 250], [50, 100, 250]],
+			dom: 'Bfrtip',
+			buttons: [
+				'pageLength',
+				{ extend: 'print', text: 'Print Table' },
+				{ extend: 'excel', text: 'Export Excel' },
+				{ extend: 'pdf', text: 'Export PDF' }
+			]
+		});
+
+		// Custom filters
+		$('#filterDate').on('keyup change', function () {
+			table.column(4).search(this.value).draw();
+		});
+		$('#filterSex').on('change', function () {
+			table.column(1).search(this.value).draw();
+		});
+		$('#filterDoctor').on('keyup change', function () {
+			table.column(3).search(this.value).draw();
+		});
+		$('#filterStatus').on('change', function () {
+			table.column(6).search(this.value).draw();
+		});
+	});
+</script>
