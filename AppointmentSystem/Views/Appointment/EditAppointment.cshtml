@@ -27,68 +27,78 @@
                 <input type="hidden" asp-for="Appointment.AppointmentId" />
                 <input type="hidden" asp-for="Appointment.PatientId" />
 
-                <div class="row mb-3">
+                <div class="row g-4">
+                    <!-- Left Column (Patient + Doctor Info) -->
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Patient Name</label>
-                        <input class="form-control" value="@Model.Appointment.Patient?.FullName" readonly />
+                        <div class="border rounded p-3 h-100">
+                            <h5>Patient Info</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Patient Name</label>
+                                <input class="form-control" value="@Model.Appointment.Patient?.FullName" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Phone Number</label>
+                                <input class="form-control" value="@Model.Appointment.Patient?.Phone" readonly />
+                            </div>
+
+                            <hr />
+                            <h5>Doctor Info</h5>
+                            <div class="mb-3">
+                                <label asp-for="Appointment.UserId" class="form-label fw-bold">Doctor</label>
+                                <select asp-for="Appointment.UserId" class="form-select" id="doctorSelect" required>
+                                    <option value="">-- Select Doctor --</option>
+                                    @foreach (var doctor in Model.Doctor)
+                                    {
+                                        <option value="@doctor.UserId"
+                                                selected="@(doctor.UserId == Model.Appointment.UserId ? "selected" : null)">
+                                            Dr. @doctor.FullName (@(doctor.Specialization ?? "General"))
+                                        </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Appointment.UserId" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Right Column (Appointment Info) -->
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Phone Number</label>
-                        <input class="form-control" value="@Model.Appointment.Patient?.Phone" readonly />
+                        <div class="border rounded p-3 h-100">
+                            <h5>Appointment Info</h5>
+                            <div class="mb-3">
+                                <label asp-for="Appointment.AppointmentDate" class="form-label fw-bold">Appointment Date</label>
+                                <input asp-for="Appointment.AppointmentDate" type="date"
+                                       class="form-control" id="appointmentDate"
+                                       min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                       required />
+                                <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Appointment.AppointmentTime" class="form-label fw-bold">Time Slot</label>
+                                <select asp-for="Appointment.AppointmentTime" class="form-select" id="timeSlot" required>
+                                    <option value="">-- Select Time Slot --</option>
+                                    @foreach (var slot in Model.AvailableTimeSlots)
+                                    {
+                                        <option value="@slot">@slot</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Appointment.AppointmentTime" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Appointment.Status" class="form-label fw-bold">Status</label>
+                                <select asp-for="Appointment.Status" class="form-select" required>
+                                    <option value="Scheduled">Scheduled</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                                <span asp-validation-for="Appointment.Status" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Appointment.Notes" class="form-label fw-bold">Notes</label>
+                                <textarea asp-for="Appointment.Notes" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Appointment.Notes" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Appointment.UserId" class="form-label fw-bold">Doctor</label>
-                    <select asp-for="Appointment.UserId" class="form-select" id="doctorSelect" required>
-                        <option value="">-- Select Doctor --</option>
-                        @foreach (var doctor in Model.Doctor)
-                        {
-                            <option value="@doctor.UserId"
-                                    selected="@(doctor.UserId == Model.Appointment.UserId ? "selected" : null)">
-                                Dr. @doctor.FullName (@(doctor.Specialization ?? "General"))
-                            </option>
-                        }
-                    </select>
-                    <span asp-validation-for="Appointment.UserId" class="text-danger"></span>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label asp-for="Appointment.AppointmentDate" class="form-label fw-bold">Appointment Date</label>
-                        <input asp-for="Appointment.AppointmentDate" type="date"
-                               class="form-control" id="appointmentDate"
-                               min="@DateTime.Today.ToString("yyyy-MM-dd")"
-                               required />
-                        <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-6">
-                        <label asp-for="Appointment.AppointmentTime" class="form-label fw-bold">Time Slot</label>
-                        <select asp-for="Appointment.AppointmentTime" class="form-select" id="timeSlot" required>
-                            <option value="">-- Select Time Slot --</option>
-                            @foreach (var slot in Model.AvailableTimeSlots)
-                            {
-                                <option value="@slot">@slot</option>
-                            }
-                        </select>
-                        <span asp-validation-for="Appointment.AppointmentTime" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Appointment.Status" class="form-label fw-bold">Status</label>
-                    <select asp-for="Appointment.Status" class="form-select" required>
-                        <option value="Scheduled">Scheduled</option>
-                        <option value="Cancelled">Cancelled</option>
-                        <option value="Completed">Completed</option>
-                    </select>
-                    <span asp-validation-for="Appointment.Status" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Appointment.Notes" class="form-label fw-bold">Notes</label>
-                    <textarea asp-for="Appointment.Notes" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Appointment.Notes" class="text-danger"></span>
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
@@ -107,7 +117,6 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Handle doctor change to update available time slots
             $('#doctorSelect, #appointmentDate').change(function() {
                 var doctorId = $('#doctorSelect').val();
                 var date = $('#appointmentDate').val();

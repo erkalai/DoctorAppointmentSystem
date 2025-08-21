@@ -1,49 +1,33 @@
-﻿@model AppointmentSystem.Models.Appointment
+﻿<div class="row g-4">
+    <div class="col-md-6">
+        <div class="border rounded p-3 h-100">
+            <h5>Patient Info</h5>
+            <p><strong>Name:</strong> @Model.Patient?.FullName</p>
+            <p><strong>Sex:</strong> @Model.Patient?.Sex</p>
+            <p><strong>Email:</strong> @Model.Patient?.Email</p>
+            <p><strong>Phone:</strong> @Model.Patient?.Phone</p>
 
-@{
-    ViewData["Title"] = "Appointment Details";
-}
-
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-10 mx-auto">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h4 class="card-title mb-4"><i class="bi bi-calendar2-check"></i> Appointment Details</h4>
-
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <h5>Patient Info</h5>
-                            <p><strong>Name:</strong> @Model.Patient?.FullName</p>
-                            <p><strong>Sex:</strong> @Model.Patient?.Sex</p>
-                            <p><strong>Email:</strong> @Model.Patient?.Email</p>
-                            <p><strong>Phone:</strong> @Model.Patient?.Phone</p>
-                        </div>
-
-                        <div class="col-md-6">
-                            <h5>Doctor Info</h5>
-                            <p><strong>Name:</strong> Dr. @Model.Doctor?.FullName</p>
-                            <p><strong>Specialization:</strong> @Model.Doctor?.Specialization</p>
-                        </div>
-
-                        <div class="col-md-6">
-                            <h5>Appointment Info</h5>
-                            <p><strong>Date:</strong> @Model.AppointmentDate.ToString("yyyy-MM-dd")</p>
-                            <p><strong>Time:</strong> @Model.AppointmentTime.ToString(@"hh\:mm")</p>
-                            <p><strong>Status:</strong> @Model.Status</p>
-                            <p><strong>Notes:</strong> @Model.Notes</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 d-flex justify-content-between">
-                        <a class="btn btn-secondary" asp-controller="Home" asp-action="Dashboard"><i class="bi bi-arrow-left-circle"></i> Back</a>
-
-                        <a class="btn btn-warning" asp-controller="Appointment" asp-action="EditAppointment" asp-route-id="@Model.AppointmentId">
-                            <i class="bi bi-pencil-square"></i> Change Appointment
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <hr />
+            <h5>Doctor Info</h5>
+            <p><strong>Name:</strong> Dr. @Model.Doctor?.FullName</p>
+            <p><strong>Specialization:</strong> @Model.Doctor?.Specialization</p>
         </div>
     </div>
+
+    <div class="col-md-6">
+        <div class="border rounded p-3 h-100">
+            <h5>Appointment Info</h5>
+            <p><strong>Date:</strong> @Model.AppointmentDate.ToString("yyyy-MM-dd")</p>
+            <p><strong>Time:</strong> @Model.AppointmentTime.ToString(@"hh\:mm")</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Notes:</strong> @Model.Notes</p>
+        </div>
+    </div>
+</div>
+<div class="mt-4 d-flex justify-content-between">
+    <a class="btn btn-secondary" asp-controller="Home" asp-action="Dashboard"><i class="bi bi-arrow-left-circle"></i> Back</a>
+
+    <a class="btn btn-warning" asp-controller="Appointment" asp-action="EditAppointment" asp-route-id="@Model.AppointmentId">
+        <i class="bi bi-pencil-square"></i> Change Appointment
+    </a>
 </div>

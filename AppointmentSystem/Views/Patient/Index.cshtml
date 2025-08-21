@@ -9,7 +9,7 @@
         <div class="col-12 col-md-10">
             <div class="card shadow-sm">*@
                 <div class="card-body"> 
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped" id="appointmentTable">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Name</th>
@@ -43,3 +43,43 @@
         </div>
     </div> 
 </div>*@
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#appointmentTable').DataTable({
+            pageLength: 20,
+            lengthMenu: [[50, 100, 250], [50, 100, 250]],
+            dom: 'Bfrtip',
+            buttons: [
+                'pageLength',
+                { extend: 'print', text: 'Print Table' },
+                { extend: 'excel', text: 'Export Excel' },
+                { extend: 'pdf', text: 'Export PDF' }
+            ]
+        });
+
+        // Custom filters
+        $('#filterDate').on('keyup change', function () {
+            table.column(4).search(this.value).draw();
+        });
+        $('#filterSex').on('change', function () {
+            table.column(1).search(this.value).draw();
+        });
+        $('#filterDoctor').on('keyup change', function () {
+            table.column(3).search(this.value).draw();
+        });
+        $('#filterStatus').on('change', function () {
+            table.column(6).search(this.value).draw();
+        });
+    });
+</script>
