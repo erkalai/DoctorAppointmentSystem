@@ -22,7 +22,7 @@
 				<td>@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
 				<td>@appointment.Status</td>
 				<td>
-					<a asp-controller="Appointment" asp-action="UpdateStatus" asp-route-id="@appointment.AppointmentId" class="btn btn-info btn-small">Update Status</a>
+					<a asp-controller="Appointment" asp-action="EditAppointment" asp-route-id="@appointment.AppointmentId" class="btn btn-info btn-small">Update Status</a>
 				</td>
 			</tr>
 		}

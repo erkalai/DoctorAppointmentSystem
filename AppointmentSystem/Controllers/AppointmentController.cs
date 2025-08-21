@@ -27,6 +27,16 @@ namespace AppointmentSystem.Controllers
             var patientExists = await _context.Patients
                 .AnyAsync(p => p.PatientId == appointment.PatientId);
 
+
+            //if (await _context.Appointments
+            //    .AnyAsync(a => a.AppointmentDate == appointment.AppointmentDate
+            //     && a.AppointmentTime == appointment.AppointmentTime
+            //     && a.Doctor == appointment.Doctor))
+            //{
+            //    TempData["ErrorMessage"] = "Please Change Date and Time";
+            //    return View(appointment);
+            //}
+
             if (!patientExists)
             {
                 ModelState.AddModelError("PatientId", "Invalid patient selected");
@@ -51,7 +61,6 @@ namespace AppointmentSystem.Controllers
                 }
             }
 
-            // If we got here, something failed
             ViewBag.Doctors = await _context.Users.Where(u => u.Role == "Doctor").ToListAsync();
             return View(appointment);
         }

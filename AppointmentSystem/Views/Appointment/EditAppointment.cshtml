@@ -3,10 +3,10 @@
     ViewData["Title"] = "Edit Appointment";
 }
 
-<div class="container mt-4">
+<div class="container">
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h2 class="mb-0"><i class="bi bi-calendar2-check"></i> Edit Appointment</h2>
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0"><i class="bi bi-calendar2-check"></i> Edit Appointment</h4>
         </div>
         <div class="card-body">
             @if (TempData["SuccessMessage"] != null)
@@ -32,18 +32,18 @@
                     <div class="col-md-6">
                         <div class="border rounded p-3 h-100">
                             <h5>Patient Info</h5>
-                            <div class="mb-3">
+                            <div class="mb-1">
                                 <label class="form-label fw-bold">Patient Name</label>
                                 <input class="form-control" value="@Model.Appointment.Patient?.FullName" readonly />
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-1">
                                 <label class="form-label fw-bold">Phone Number</label>
                                 <input class="form-control" value="@Model.Appointment.Patient?.Phone" readonly />
                             </div>
 
                             <hr />
                             <h5>Doctor Info</h5>
-                            <div class="mb-3">
+                            <div class="mb-1">
                                 <label asp-for="Appointment.UserId" class="form-label fw-bold">Doctor</label>
                                 <select asp-for="Appointment.UserId" class="form-select" id="doctorSelect" required>
                                     <option value="">-- Select Doctor --</option>
@@ -64,7 +64,7 @@
                     <div class="col-md-6">
                         <div class="border rounded p-3 h-100">
                             <h5>Appointment Info</h5>
-                            <div class="mb-3">
+                            <div class="mb-1">
                                 <label asp-for="Appointment.AppointmentDate" class="form-label fw-bold">Appointment Date</label>
                                 <input asp-for="Appointment.AppointmentDate" type="date"
                                        class="form-control" id="appointmentDate"
@@ -72,10 +72,16 @@
                                        required />
                                 <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
                             </div>
-                            <div class="mb-3">
+                            <label asp-for="Appointment.AppointmentTime" type="time" class="form-control" value="@Model.Appointment.AppointmentTime"  />
+                            <div class="mb-1">
+                                
                                 <label asp-for="Appointment.AppointmentTime" class="form-label fw-bold">Time Slot</label>
+                                
                                 <select asp-for="Appointment.AppointmentTime" class="form-select" id="timeSlot" required>
-                                    <option value="">-- Select Time Slot --</option>
+                                    <option asp-for="Appointment.AppointmentTime" type="time"
+                                            class="form-control" id="appointmentTime"
+                                            min="@DateTime.Today.ToString("HH:mm")" />
+
                                     @foreach (var slot in Model.AvailableTimeSlots)
                                     {
                                         <option value="@slot">@slot</option>
@@ -83,7 +89,7 @@
                                 </select>
                                 <span asp-validation-for="Appointment.AppointmentTime" class="text-danger"></span>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-1">
                                 <label asp-for="Appointment.Status" class="form-label fw-bold">Status</label>
                                 <select asp-for="Appointment.Status" class="form-select" required>
                                     <option value="Scheduled">Scheduled</option>
@@ -92,7 +98,7 @@
                                 </select>
                                 <span asp-validation-for="Appointment.Status" class="text-danger"></span>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-1">
                                 <label asp-for="Appointment.Notes" class="form-label fw-bold">Notes</label>
                                 <textarea asp-for="Appointment.Notes" class="form-control" rows="3"></textarea>
                                 <span asp-validation-for="Appointment.Notes" class="text-danger"></span>
@@ -102,7 +108,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <a asp-action="GetAllAppointments" class="btn btn-outline-secondary">
+                    <a asp-controller="Home" asp-action="Dashboard" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i> Back to List
                     </a>
                     <button type="submit" class="btn btn-primary">
